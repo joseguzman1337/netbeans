@@ -500,6 +500,9 @@ public final class JavaCompletionTask<T> extends BaseTask {
             case DECONSTRUCTION_PATTERN:
                 insideDeconstructionRecordPattern(env);
                 break;
+            case TEMPLATE:
+                insideStringTemplate(env);
+                break;
         }
     }
 
@@ -1663,6 +1666,9 @@ public final class JavaCompletionTask<T> extends BaseTask {
                     env.afterExtends();
                 } else if (TreeUtilities.CLASS_TREE_KINDS.contains(parent.getKind()) && ((ClassTree) parent).getImplementsClause().contains(fa)) {
                     kinds = EnumSet.of(INTERFACE);
+                } else if (parent.getKind() == Kind.PACKAGE) {
+                    kinds = EnumSet.noneOf(ElementKind.class);
+                    srcOnly = true;
                 } else if (parent.getKind() == Tree.Kind.IMPORT) {
                     inImport = true;
                     kinds = ((ImportTree) parent).isStatic() ? EnumSet.of(CLASS, ENUM, INTERFACE, ANNOTATION_TYPE, RECORD, FIELD, METHOD, ENUM_CONSTANT, RECORD_COMPONENT) : EnumSet.of(CLASS, ANNOTATION_TYPE, ENUM, INTERFACE, RECORD);
@@ -3387,6 +3393,16 @@ public final class JavaCompletionTask<T> extends BaseTask {
     }
     private boolean isSealedSupported(final Env env) {
         return env.getController().getSourceVersion().compareTo(SourceVersion.RELEASE_15) >= 0;
+    }
+
+    private void insideStringTemplate(Env env) throws IOException {
+        final int offset = env.getOffset();
+        final TreePath path = env.getPath();
+        TokenSequence<JavaTokenId> ts = findLastNonWhitespaceToken(env, path.getLeaf(), offset);
+        if (ts.token().id() == JavaTokenId.STRING_LITERAL || ts.token().id() == JavaTokenId.MULTILINE_STRING_LITERAL) {
+            localResult(env);
+            addValueKeywords(env);
+        }
     }
 
     private void localResult(Env env) throws IOException {
@@ -6170,6 +6186,10 @@ public final class JavaCompletionTask<T> extends BaseTask {
                     break;
                 case BLOCK:
                     return null;
+                case TEMPLATE:
+                    //TODO:can there be good smart types?
+                    //(how about incomplete String templates?)
+                    return null;
             }
             lastTree = tree;
             path = path.getParentPath();
@@ -6597,4 +6617,5 @@ public final class JavaCompletionTask<T> extends BaseTask {
         }
         return kind;
     }
+
 }

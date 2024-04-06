@@ -18,93 +18,94 @@
  */
 package org.netbeans.modules.languages.hcl.terraform;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.netbeans.modules.csl.api.ColoringAttributes;
-import org.netbeans.modules.csl.api.OffsetRange;
-import org.netbeans.modules.csl.api.SemanticAnalyzer;
-import org.netbeans.modules.languages.hcl.ast.HCLAttribute;
+import org.netbeans.modules.languages.hcl.HCLSemanticAnalyzer;
+import org.netbeans.modules.languages.hcl.HCLParserResult;
 import org.netbeans.modules.languages.hcl.ast.HCLBlock;
 import org.netbeans.modules.languages.hcl.ast.HCLIdentifier;
-import org.netbeans.modules.languages.hcl.ast.SourceRef;
-import org.netbeans.modules.parsing.spi.Scheduler;
-import org.netbeans.modules.parsing.spi.SchedulerEvent;
+import org.netbeans.modules.languages.hcl.ast.HCLResolveOperation;
+import org.netbeans.modules.languages.hcl.ast.HCLVariable;
+import org.netbeans.modules.languages.hcl.SourceRef;
+import org.netbeans.modules.languages.hcl.ast.HCLTreeWalker;
+import org.netbeans.modules.languages.hcl.terraform.TerraformParserResult.BlockType;
+import static org.netbeans.modules.languages.hcl.terraform.TerraformParserResult.BlockType.CHECK;
+import static org.netbeans.modules.languages.hcl.terraform.TerraformParserResult.BlockType.DATA;
+import static org.netbeans.modules.languages.hcl.terraform.TerraformParserResult.BlockType.LOCALS;
+import static org.netbeans.modules.languages.hcl.terraform.TerraformParserResult.BlockType.MODULE;
+import static org.netbeans.modules.languages.hcl.terraform.TerraformParserResult.BlockType.OUTPUT;
+import static org.netbeans.modules.languages.hcl.terraform.TerraformParserResult.BlockType.PROVIDER;
+import static org.netbeans.modules.languages.hcl.terraform.TerraformParserResult.BlockType.RESOURCE;
 
 /**
  *
  * @author lkishalmi
  */
-public final class TerraformSemanticAnalyzer extends SemanticAnalyzer<TerraformParserResult> {
+public final class TerraformSemanticAnalyzer extends HCLSemanticAnalyzer {
 
-    private volatile boolean cancelled;
-    private Map<OffsetRange, Set<ColoringAttributes>> semanticHighlights;
+    private static final Set<String> RESOLVE_BASES = Set.of(
+            "data",
+            "local",
+            "module",
+            "path",
+            "provider",
+            "var"
+    );
+
+    private static final Set<String> LITERAL_TYPES = Set.of(
+            "bool",
+            "number",
+            "null",
+            "string"
+    );
 
     @Override
-    public Map<OffsetRange, Set<ColoringAttributes>> getHighlights() {
-        return semanticHighlights;
+    protected Highlighter createHighlighter(HCLParserResult result) {
+        return new TerraformHighlighter(result.getReferences());
     }
+    
+    private class TerraformHighlighter extends DefaultHighlighter {
+        private BlockType rootBlockType;
 
-    protected final synchronized boolean isCancelled() {
-        return cancelled;
-    }
-
-    protected final synchronized void resume() {
-        cancelled = false;
-    }
-
-    @Override
-    public void run(TerraformParserResult result, SchedulerEvent event) {
-        resume();
-
-        if (isCancelled()) {
-            return;
+        protected TerraformHighlighter(SourceRef refs) {
+            super(refs);
         }
-        Map<OffsetRange, Set<ColoringAttributes>> highlights = new HashMap<>();
-        SourceRef refs = result.getReferences();
-        for (HCLBlock block : result.getDocument().getBlocks()) {
-            List<HCLIdentifier> decl = block.getDeclaration();
-            HCLIdentifier type = decl.get(0);
 
-            TerraformParserResult.BlockType bt = TerraformParserResult.BlockType.get(type.id());
-            if (bt != null) {
-                refs.getOffsetRange(type).ifPresent((range) -> highlights.put(range, ColoringAttributes.CLASS_SET));
-                if (decl.size() > 1) {
-                    for (int i = 1; i < decl.size(); i++) {
-                        HCLIdentifier id = decl.get(i);
-                        refs.getOffsetRange(id).ifPresent((range) -> highlights.put(range, ColoringAttributes.CONSTRUCTOR_SET));
+        @Override
+        protected void highlight(HCLTreeWalker.Step step) {
+            super.highlight(step);
+
+            // TODO: Can use record patterns from Java 21
+            if (step.depth() == 1 && step.node() instanceof HCLBlock block) {
+                List<HCLIdentifier> dcl = block.declaration();
+                if (!dcl.isEmpty()) {
+                    rootBlockType = TerraformParserResult.BlockType.get(dcl.get(0).id());
+                }
+            } else if (step.node() instanceof HCLResolveOperation.Attribute attr) {
+                if ((rootBlockType != null) && (attr.base() instanceof HCLVariable var)) {
+                    String name = var.name().id();
+                    switch (rootBlockType) {
+                        case CHECK:
+                        case DATA:
+                        case LOCALS:
+                        case MODULE:
+                        case OUTPUT:
+                        case PROVIDER:
+                        case RESOURCE:
+                            if (RESOLVE_BASES.contains(name)) {
+                                mark(attr.base(), ColoringAttributes.FIELD_SET);
+                            }
+                            break;
                     }
                 }
+            } else if (rootBlockType == BlockType.VARIABLE && (step.node() instanceof HCLVariable var)) {
+                String name = var.name().id();
+                if (LITERAL_TYPES.contains(name)) {
+                    mark(var, ColoringAttributes.FIELD_SET);
+                }
             }
-            markAttributes(highlights, refs, block);
         }
-        semanticHighlights = highlights;
-    }
 
-    private void markAttributes(Map<OffsetRange, Set<ColoringAttributes>> highlights, SourceRef refs, HCLBlock block) {
-        for (HCLAttribute attr : block.getAttributes()) {
-            refs.getOffsetRange(attr.getName()).ifPresent((range) -> highlights.put(range, ColoringAttributes.FIELD_SET));
-        }
-        for (HCLBlock nested : block.getBlocks()) {
-            markAttributes(highlights, refs, nested);
-        }
     }
-
-    @Override
-    public int getPriority() {
-        return 0;
-    }
-
-    @Override
-    public Class<? extends Scheduler> getSchedulerClass() {
-        return Scheduler.EDITOR_SENSITIVE_TASK_SCHEDULER;
-    }
-
-    @Override
-    public void cancel() {
-        cancelled = true;
-    }
-
-    
 }

@@ -26,11 +26,14 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
@@ -42,27 +45,42 @@ import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.swing.text.StyledDocument;
+import org.eclipse.lsp4j.CreateFile;
+import org.eclipse.lsp4j.MessageParams;
+import org.eclipse.lsp4j.MessageType;
 import org.eclipse.lsp4j.Position;
 import org.eclipse.lsp4j.Range;
+import org.eclipse.lsp4j.ResourceOperation;
 import org.eclipse.lsp4j.SymbolKind;
 import org.eclipse.lsp4j.SymbolTag;
+import org.eclipse.lsp4j.TextDocumentEdit;
+import org.eclipse.lsp4j.TextEdit;
+import org.eclipse.lsp4j.VersionedTextDocumentIdentifier;
+import org.eclipse.lsp4j.WorkspaceEdit;
+import org.eclipse.lsp4j.jsonrpc.messages.Either;
 import org.netbeans.api.annotations.common.NonNull;
 import org.netbeans.api.java.source.CompilationInfo;
 import org.netbeans.api.lsp.StructureElement;
 import org.netbeans.modules.editor.java.Utilities;
+import org.netbeans.modules.java.lsp.server.protocol.NbCodeClientCapabilities;
+import org.netbeans.modules.java.lsp.server.protocol.NbCodeLanguageClient;
 import org.netbeans.modules.parsing.spi.indexing.support.QuerySupport;
 import org.netbeans.spi.jumpto.type.SearchType;
 import org.openide.cookies.EditorCookie;
+import org.openide.cookies.SaveCookie;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.URLMapper;
 import org.openide.text.NbDocument;
 import org.openide.util.Exceptions;
+import org.openide.util.Union2;
 
 /**
  *
  * @author lahvac
  */
 public class Utils {
+
+    public static final String DEFAULT_COMMAND_PREFIX = "nbls";
 
     public static SymbolKind structureElementKind2SymbolKind (StructureElement.Kind kind) {
         switch (kind) {
@@ -414,21 +432,29 @@ public class Utils {
 
         int tagStart = -1;
         StringBuilder sb = new StringBuilder();
+        String additional = null;
         for (int i = 0; i < s.length(); i++) {
             char ch = s.charAt(i);
             T: if (inTag) {
                 boolean alpha = Character.isAlphabetic(ch);
                 if (tagStart > 0 && !alpha) {
                     String t = s.substring(tagStart, i).toLowerCase(Locale.ENGLISH);
+                    // prevent entering tagstart state again
+                    tagStart = -2;
+                    if (ch == '>') { // NOI18N
+                        inTag = false;
+                    }
                     switch (t) {
                         case "br": case "p": case "hr": // NOI1N
                             ch ='\n'; // NOI18N
                             // continues to process 'ch' as if it came from the string, but `inTag` remains
                             // the same.
                             break T;
+                        case "li":
+                            ch = '\n';
+                            additional = "* ";
+                            break T;
                     }
-                    // prevent entering tagstart state again
-                    tagStart = -2;
                 }
                 if (ch == '>') { // NOI18N
                     inTag = false;
@@ -441,6 +467,11 @@ public class Utils {
                     tagStart = -1;
                     inTag = true;
                     continue;
+                } else if (ch == '&') {
+                    if ("&nbsp;".contentEquals(s.subSequence(i, Math.min(s.length(), i + 6)))) {
+                        i += 5;
+                        ch = ' ';  // NOI18N
+                    }
                 }
             }
             if (collapseWhitespaces) {
@@ -458,6 +489,10 @@ public class Utils {
                 }
             }
             sb.append(ch);
+            if (additional != null) {
+                sb.append(additional);
+                additional = null;
+            }
         }
         return collapseWhitespaces ? sb.toString().trim() : sb.toString();
     }
@@ -470,5 +505,70 @@ public class Utils {
      */
     public static String html2plain(String s) {
         return html2plain(s, false);
+    }
+
+    public static String encodeCommand(String cmd, NbCodeClientCapabilities capa) {
+        String prefix = capa != null ? capa.getCommandPrefix()
+                                     : DEFAULT_COMMAND_PREFIX;
+
+        if (cmd.startsWith(DEFAULT_COMMAND_PREFIX) &&
+            !DEFAULT_COMMAND_PREFIX.equals(prefix)) {
+            return prefix + cmd.substring(DEFAULT_COMMAND_PREFIX.length());
+        } else {
+            return cmd;
+        }
+    }
+
+    public static String decodeCommand(String cmd, NbCodeClientCapabilities capa) {
+        String prefix = capa != null ? capa.getCommandPrefix()
+                                     : DEFAULT_COMMAND_PREFIX;
+
+        if (cmd.startsWith(prefix) &&
+            !DEFAULT_COMMAND_PREFIX.equals(prefix)) {
+            return DEFAULT_COMMAND_PREFIX + cmd.substring(prefix.length());
+        } else {
+            return cmd;
+        }
+    }
+
+    public static void ensureCommandsPrefixed(Collection<String> commands) {
+        Set<String> wrongCommands = commands.stream()
+                                            .filter(cmd -> !cmd.startsWith(DEFAULT_COMMAND_PREFIX))
+                                            .filter(cmd -> !cmd.startsWith("test."))
+                                            .collect(Collectors.toSet());
+
+        if (!wrongCommands.isEmpty()) {
+            throw new IllegalStateException("Some commands are not properly prefixed: " + wrongCommands);
+        }
+    }
+    
+    public static WorkspaceEdit workspaceEditFromApi(org.netbeans.api.lsp.WorkspaceEdit edit, String uri, NbCodeLanguageClient client) {
+        List<Either<TextDocumentEdit, ResourceOperation>> documentChanges = new ArrayList<>();
+        for (Union2<org.netbeans.api.lsp.TextDocumentEdit, org.netbeans.api.lsp.ResourceOperation> parts : edit.getDocumentChanges()) {
+            if (parts.hasFirst()) {
+                String docUri = parts.first().getDocument();
+                try {
+                    FileObject file = Utils.fromUri(docUri);
+                    if (file == null && uri != null) {
+                        file = Utils.fromUri(uri);
+                    }
+                    FileObject fo = file;
+                    if (fo != null) {
+                        List<TextEdit> edits = parts.first().getEdits().stream().map(te -> new TextEdit(new Range(Utils.createPosition(fo, te.getStartOffset()), Utils.createPosition(fo, te.getEndOffset())), te.getNewText())).collect(Collectors.toList());
+                        TextDocumentEdit tde = new TextDocumentEdit(new VersionedTextDocumentIdentifier(docUri, -1), edits);
+                        documentChanges.add(Either.forLeft(tde));
+                    }
+                } catch (Exception ex) {
+                    client.logMessage(new MessageParams(MessageType.Error, ex.getMessage()));
+                }
+            } else {
+                if (parts.second() instanceof org.netbeans.api.lsp.ResourceOperation.CreateFile) {
+                    documentChanges.add(Either.forRight(new CreateFile(((org.netbeans.api.lsp.ResourceOperation.CreateFile) parts.second()).getNewFile())));
+                } else {
+                    throw new IllegalStateException(String.valueOf(parts.second()));
+                }
+            }
+        }
+        return new WorkspaceEdit(documentChanges);
     }
 }

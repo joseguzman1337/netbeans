@@ -44,7 +44,7 @@ class DBConfigurationProvider implements vscode.DebugConfigurationProvider {
 
 	resolveDebugConfigurationWithSubstitutedVariables?(_folder: vscode.WorkspaceFolder | undefined, config: vscode.DebugConfiguration, _token?: vscode.CancellationToken): vscode.ProviderResult<vscode.DebugConfiguration> {
         return new Promise<vscode.DebugConfiguration>(async resolve => {
-			let o: Object = await vscode.commands.executeCommand('java.db.connection');
+			let o: Object = await vscode.commands.executeCommand('nbls.db.connection');
 			if (config === undefined) {
 				config = {} as vscode.DebugConfiguration;
 			}
@@ -58,6 +58,16 @@ class DBConfigurationProvider implements vscode.DebugConfigurationProvider {
 			resolve(config);
 		});
 	}
+}
+
+export function onDidTerminateSession(session: vscode.DebugSession): any {
+    const config = session.configuration;
+    if (config.env) {
+        const file = config.env["MICRONAUT_CONFIG_FILES"];
+        if (file) {
+            vscode.workspace.fs.delete(vscode.Uri.file(file));
+        }
+    }
 }
 
 export const dBConfigurationProvider = new DBConfigurationProvider();

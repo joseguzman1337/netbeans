@@ -42,10 +42,10 @@ import org.apache.maven.artifact.versioning.ComparableVersion;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
 import org.netbeans.api.annotations.common.NonNull;
 import org.netbeans.api.annotations.common.NullAllowed;
 import org.netbeans.api.project.FileOwnerQuery;
@@ -103,7 +103,7 @@ public class JUnitOutputListenerProvider implements OutputProcessor {
     private static final String GROUP_FILE_NAME = "dir";
     
     public JUnitOutputListenerProvider(RunConfig config) {
-        runningPattern = Pattern.compile("(?:\\[surefire\\] )?Running (.*)", Pattern.DOTALL); //NOI18N        
+        runningPattern = Pattern.compile("(?:\\[(?:INFO|surefire)\\] )?Running (.*)", Pattern.DOTALL); //NOI18N
         outDirPattern = Pattern.compile ("(?:\\[INFO\\] )?Surefire report directory\\: (?<" + GROUP_FILE_NAME + ">.*)", Pattern.DOTALL); //NOI18N
         outDirPattern2 = Pattern.compile("(?:\\[INFO\\] )?Setting reports dir\\: (?<" + GROUP_FILE_NAME + ">.*)", Pattern.DOTALL); //NOI18N
         this.config = config;

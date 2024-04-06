@@ -1,5 +1,5 @@
 #Signature file v4.1
-#Version 2.158.0
+#Version 2.162.0
 
 CLSS public abstract java.awt.Component
 cons protected init()
@@ -1157,6 +1157,9 @@ meth public org.apache.maven.project.MavenProject loadAlternateMavenProject(org.
  anno 0 org.netbeans.api.annotations.common.NonNull()
 meth public static boolean isErrorPlaceholder(org.apache.maven.project.MavenProject)
  anno 1 org.netbeans.api.annotations.common.NonNull()
+meth public static boolean isIncomplete(org.apache.maven.project.MavenProject)
+ anno 1 org.netbeans.api.annotations.common.NonNull()
+meth public static org.apache.maven.project.MavenProject getPartialProject(org.apache.maven.project.MavenProject)
 meth public static void addPropertyChangeListener(org.netbeans.api.project.Project,java.beans.PropertyChangeListener)
 meth public static void fireMavenProjectReload(org.netbeans.api.project.Project)
 meth public static void removePropertyChangeListener(org.netbeans.api.project.Project,java.beans.PropertyChangeListener)
@@ -2021,7 +2024,7 @@ innr public final static !enum Status
 innr public final static ProxyResult
 meth public java.util.concurrent.CompletableFuture<org.netbeans.modules.maven.execute.MavenProxySupport$ProxyResult> checkProxySettings()
 supr java.lang.Object
-hfds FILENAME_BASE_SETTINGS,FILENAME_SETTINGS,FILENAME_SETTINGS_EXT,FILENAME_SUFFIX_OLD,ICON_MAVEN_PROJECT,LOG,PORT_DEFAULT_HTTP,PORT_DEFAULT_HTTPS,PROBE_URI_STRING,SUFFIX_NEW_PROXY,SUFFIX_NONE_PROXY,TAG_ACTIVE_END,TAG_ACTIVE_START,TAG_NAME_ACTIVE,TAG_PROXIES,TAG_PROXY,TAG_SETTINGS,acknowledgedResults
+hfds FILENAME_BASE_SETTINGS,FILENAME_SETTINGS,FILENAME_SETTINGS_EXT,FILENAME_SUFFIX_OLD,ICON_MAVEN_PROJECT,LOG,PORT_DEFAULT_HTTP,PORT_DEFAULT_HTTPS,PROBE_URI_STRING,PROXY_PROBE_TIMEOUT,SUFFIX_NEW_PROXY,SUFFIX_NONE_PROXY,TAG_ACTIVE_END,TAG_ACTIVE_START,TAG_NAME_ACTIVE,TAG_PROXIES,TAG_PROXY,TAG_SETTINGS,acknowledgedResults
 hcls LineAndColumn,Processor,ProxyInfo,TagInfo,TextInfo,XppDelegate
 
 CLSS public final static org.netbeans.modules.maven.execute.MavenProxySupport$ProxyResult
@@ -2193,18 +2196,18 @@ supr java.lang.Object
 CLSS public org.netbeans.modules.maven.execute.model.io.jdom.NetbeansBuildActionJDOMWriter
 cons public init()
 innr public Counter
-meth protected org.jdom.Element findAndReplaceProperties(org.netbeans.modules.maven.execute.model.io.jdom.NetbeansBuildActionJDOMWriter$Counter,org.jdom.Element,java.lang.String,java.util.Map)
-meth protected org.jdom.Element findAndReplaceSimpleElement(org.netbeans.modules.maven.execute.model.io.jdom.NetbeansBuildActionJDOMWriter$Counter,org.jdom.Element,java.lang.String,java.lang.String,java.lang.String)
-meth protected org.jdom.Element findAndReplaceSimpleLists(org.netbeans.modules.maven.execute.model.io.jdom.NetbeansBuildActionJDOMWriter$Counter,org.jdom.Element,java.util.Collection,java.lang.String,java.lang.String)
-meth protected org.jdom.Element findAndReplaceXpp3DOM(org.netbeans.modules.maven.execute.model.io.jdom.NetbeansBuildActionJDOMWriter$Counter,org.jdom.Element,java.lang.String,org.codehaus.plexus.util.xml.Xpp3Dom)
-meth protected org.jdom.Element updateElement(org.netbeans.modules.maven.execute.model.io.jdom.NetbeansBuildActionJDOMWriter$Counter,org.jdom.Element,java.lang.String,boolean)
-meth protected void insertAtPreferredLocation(org.jdom.Element,org.jdom.Element,org.netbeans.modules.maven.execute.model.io.jdom.NetbeansBuildActionJDOMWriter$Counter)
-meth protected void iterate2NetbeansActionMapping(org.netbeans.modules.maven.execute.model.io.jdom.NetbeansBuildActionJDOMWriter$Counter,org.jdom.Element,java.util.Collection,java.lang.String)
-meth protected void replaceXpp3DOM(org.jdom.Element,org.codehaus.plexus.util.xml.Xpp3Dom,org.netbeans.modules.maven.execute.model.io.jdom.NetbeansBuildActionJDOMWriter$Counter)
-meth protected void updateActionToGoalMapping(org.netbeans.modules.maven.execute.model.ActionToGoalMapping,java.lang.String,org.netbeans.modules.maven.execute.model.io.jdom.NetbeansBuildActionJDOMWriter$Counter,org.jdom.Element)
-meth protected void updateNetbeansActionMapping(org.netbeans.modules.maven.execute.model.NetbeansActionMapping,java.lang.String,org.netbeans.modules.maven.execute.model.io.jdom.NetbeansBuildActionJDOMWriter$Counter,org.jdom.Element)
-meth public void write(org.netbeans.modules.maven.execute.model.ActionToGoalMapping,org.jdom.Document,java.io.OutputStreamWriter) throws java.io.IOException
-meth public void write(org.netbeans.modules.maven.execute.model.ActionToGoalMapping,org.jdom.Document,java.io.Writer,org.jdom.output.Format) throws java.io.IOException
+meth protected org.jdom2.Element findAndReplaceProperties(org.netbeans.modules.maven.execute.model.io.jdom.NetbeansBuildActionJDOMWriter$Counter,org.jdom2.Element,java.lang.String,java.util.Map)
+meth protected org.jdom2.Element findAndReplaceSimpleElement(org.netbeans.modules.maven.execute.model.io.jdom.NetbeansBuildActionJDOMWriter$Counter,org.jdom2.Element,java.lang.String,java.lang.String,java.lang.String)
+meth protected org.jdom2.Element findAndReplaceSimpleLists(org.netbeans.modules.maven.execute.model.io.jdom.NetbeansBuildActionJDOMWriter$Counter,org.jdom2.Element,java.util.Collection,java.lang.String,java.lang.String)
+meth protected org.jdom2.Element findAndReplaceXpp3DOM(org.netbeans.modules.maven.execute.model.io.jdom.NetbeansBuildActionJDOMWriter$Counter,org.jdom2.Element,java.lang.String,org.codehaus.plexus.util.xml.Xpp3Dom)
+meth protected org.jdom2.Element updateElement(org.netbeans.modules.maven.execute.model.io.jdom.NetbeansBuildActionJDOMWriter$Counter,org.jdom2.Element,java.lang.String,boolean)
+meth protected void insertAtPreferredLocation(org.jdom2.Element,org.jdom2.Element,org.netbeans.modules.maven.execute.model.io.jdom.NetbeansBuildActionJDOMWriter$Counter)
+meth protected void iterate2NetbeansActionMapping(org.netbeans.modules.maven.execute.model.io.jdom.NetbeansBuildActionJDOMWriter$Counter,org.jdom2.Element,java.util.Collection,java.lang.String)
+meth protected void replaceXpp3DOM(org.jdom2.Element,org.codehaus.plexus.util.xml.Xpp3Dom,org.netbeans.modules.maven.execute.model.io.jdom.NetbeansBuildActionJDOMWriter$Counter)
+meth protected void updateActionToGoalMapping(org.netbeans.modules.maven.execute.model.ActionToGoalMapping,java.lang.String,org.netbeans.modules.maven.execute.model.io.jdom.NetbeansBuildActionJDOMWriter$Counter,org.jdom2.Element)
+meth protected void updateNetbeansActionMapping(org.netbeans.modules.maven.execute.model.NetbeansActionMapping,java.lang.String,org.netbeans.modules.maven.execute.model.io.jdom.NetbeansBuildActionJDOMWriter$Counter,org.jdom2.Element)
+meth public void write(org.netbeans.modules.maven.execute.model.ActionToGoalMapping,org.jdom2.Document,java.io.OutputStreamWriter) throws java.io.IOException
+meth public void write(org.netbeans.modules.maven.execute.model.ActionToGoalMapping,org.jdom2.Document,java.io.Writer,org.jdom2.output.Format) throws java.io.IOException
 supr java.lang.Object
 hfds factory,lineSeparator
 
@@ -2361,7 +2364,7 @@ meth public void setUseBestMaven(boolean)
 meth public void setUseBestMavenAltLocation(boolean)
 meth public void setVMOptionsWrap(boolean)
 supr java.lang.Object
-hfds INSTANCE,MAVEN_CORE_JAR_PATTERN,PROP_ALWAYS_OUTPUT,PROP_BINARY_DOWNLOAD,PROP_CHECKSUM_POLICY,PROP_COLLAPSE_FOLDS,PROP_DEBUG,PROP_DEFAULT_JDK,PROP_DEFAULT_OPTIONS,PROP_ERRORS,PROP_EXPERIMENTAL_ALTERNATE_LOCATION,PROP_EXPERIMENTAL_USE_ALTERNATE_LOCATION,PROP_EXPERIMENTAL_USE_BEST_MAVEN,PROP_FAILURE_BEHAVIOUR,PROP_JAVADOC_DOWNLOAD,PROP_LAST_ARCHETYPE_GROUPID,PROP_LAST_ARCHETYPE_VERSION,PROP_MAVEN_RUNTIMES,PROP_OUTPUT_TAB_CONFIG,PROP_OUTPUT_TAB_NAME,PROP_PLUGIN_POLICY,PROP_PREFER_WRAPPER,PROP_REUSE_OUTPUT,PROP_SHOW_LOGGING_LEVEL,PROP_SKIP_TESTS,PROP_SOURCE_DOWNLOAD,PROP_USE_REGISTRY,PROP_VM_OPTIONS_WRAP,listeners
+hfds DEFAULT_PROXY_BEHAVIOUR,INSTANCE,MAVEN_CORE_JAR_PATTERN,PROP_ALWAYS_OUTPUT,PROP_BINARY_DOWNLOAD,PROP_CHECKSUM_POLICY,PROP_COLLAPSE_FOLDS,PROP_DEBUG,PROP_DEFAULT_JDK,PROP_DEFAULT_OPTIONS,PROP_ERRORS,PROP_EXPERIMENTAL_ALTERNATE_LOCATION,PROP_EXPERIMENTAL_USE_ALTERNATE_LOCATION,PROP_EXPERIMENTAL_USE_BEST_MAVEN,PROP_FAILURE_BEHAVIOUR,PROP_JAVADOC_DOWNLOAD,PROP_LAST_ARCHETYPE_GROUPID,PROP_LAST_ARCHETYPE_VERSION,PROP_MAVEN_RUNTIMES,PROP_OUTPUT_TAB_CONFIG,PROP_OUTPUT_TAB_NAME,PROP_PLUGIN_POLICY,PROP_PREFER_WRAPPER,PROP_REUSE_OUTPUT,PROP_SHOW_LOGGING_LEVEL,PROP_SKIP_TESTS,PROP_SOURCE_DOWNLOAD,PROP_USE_REGISTRY,PROP_VM_OPTIONS_WRAP,SYSPROP_DEFAULT_PROXY_BEHAVIOUR,listeners
 
 CLSS public final static !enum org.netbeans.modules.maven.options.MavenSettings$DownloadStrategy
  outer org.netbeans.modules.maven.options.MavenSettings
@@ -2382,14 +2385,16 @@ supr java.lang.Enum<org.netbeans.modules.maven.options.MavenSettings$OutputTabNa
 
 CLSS public final org.netbeans.modules.maven.options.MavenVersionSettings
 fld public final static java.lang.String VERSION_COMPILER = "maven-compiler-plugin"
+ anno 0 java.lang.Deprecated()
 fld public final static java.lang.String VERSION_RESOURCES = "maven-resources-plugin"
-meth protected final java.lang.String getProperty(java.lang.String)
-meth protected final java.lang.String putProperty(java.lang.String,java.lang.String)
-meth protected final java.util.prefs.Preferences getPreferences()
+ anno 0 java.lang.Deprecated()
+meth public java.lang.String getNBVersion()
 meth public java.lang.String getVersion(java.lang.String)
+ anno 0 java.lang.Deprecated()
+meth public java.lang.String getVersion(java.lang.String,java.lang.String)
 meth public static org.netbeans.modules.maven.options.MavenVersionSettings getDefault()
 supr java.lang.Object
-hfds INSTANCE
+hfds INSTANCE,fallback
 
 CLSS public final !enum org.netbeans.modules.maven.options.NetworkProxySettings
 fld public final static org.netbeans.modules.maven.options.NetworkProxySettings ASK
@@ -2410,8 +2415,8 @@ fld public final static java.lang.String BUNDLED_RUNTIME_VERSION
 meth public void applyValues()
 meth public void setValues()
 supr javax.swing.JPanel
-hfds AVAILABLE_OPTIONS,RP,SEPARATOR,btnDirectory,btnGoals,btnIndex,btnOptions,buttonGroup1,cbAlternateLocation,cbAlwaysShow,cbCollapseSuccessFolds,cbEnableIndexDownload,cbEnableIndexing,cbNetworkProxy,cbOutputTabShowConfig,cbPreferWrapper,cbProjectNodeNameMode,cbReuse,cbShowInfoLevel,cbSkipTests,cbUseBestMaven,changed,comBinaries,comIndex,comJavadoc,comJdkHome,comManageJdks,comMavenHome,comSource,completer,controller,jLabel3,jLabel4,jScrollPane1,jdkHomeDataModel,lastSelected,lbNetworkSettings,lblBinaries,lblCategory,lblCommandLine,lblDirectory,lblExternalVersion,lblHint,lblIndex,lblJavadoc,lblJdkHome,lblOptions,lblOutputTab,lblSource,listItemChangedListener,listener,lstCategory,mavenHomeDataModel,mavenRuntimeHome,plnExperimental,pnlAppearance,pnlCards,pnlDependencies,pnlExecution,pnlIndex,predefinedRuntimes,rbOutputTabId,rbOutputTabName,txtDirectory,txtOptions,txtProjectNodeNameCustomPattern,userDefinedMavenRuntimes,userDefinedMavenRuntimesStored,valid
-hcls ActionListenerImpl,ComboBoxRenderer,DocumentListenerImpl
+hfds AVAILABLE_OPTIONS,RP,SEPARATOR,bgIndexFilter,btnDirectory,btnGoals,btnIndex,btnOptions,buttonGroup1,cbAlternateLocation,cbAlwaysShow,cbCollapseSuccessFolds,cbEnableIndexDownload,cbEnableIndexing,cbEnableMultiThreading,cbNetworkProxy,cbOutputTabShowConfig,cbPreferWrapper,cbProjectNodeNameMode,cbReuse,cbShowInfoLevel,cbSkipTests,cbUseBestMaven,changed,comBinaries,comIndex,comJavadoc,comJdkHome,comManageJdks,comMavenHome,comSource,completer,controller,jLabel3,jLabel4,jScrollPane1,jdkHomeDataModel,lastSelected,lbNetworkSettings,lblBinaries,lblCategory,lblCommandLine,lblDirectory,lblExternalVersion,lblHint,lblIndex,lblIndexFilter,lblJavadoc,lblJdkHome,lblOptions,lblOutputTab,lblSource,listItemChangedListener,listener,lstCategory,mavenHomeDataModel,mavenRuntimeHome,permissionsTable,plnExperimental,pnlAppearance,pnlCards,pnlDependencies,pnlExecution,pnlIndex,predefinedRuntimes,rb2Years,rb5Years,rbFullIndex,rbOutputTabId,rbOutputTabName,txtDirectory,txtOptions,txtProjectNodeNameCustomPattern,userDefinedMavenRuntimes,userDefinedMavenRuntimesStored,valid
+hcls ActionListenerImpl,ComboBoxRenderer,DocumentListenerImpl,IndexDownloadPermissionTableModel
 
 CLSS public org.netbeans.modules.maven.options.UnsetProxyChecker
 cons public init()
