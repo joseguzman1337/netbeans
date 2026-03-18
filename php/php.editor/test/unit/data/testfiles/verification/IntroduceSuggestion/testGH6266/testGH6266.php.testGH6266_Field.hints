@@ -1,4 +1,0 @@
-$test->fie^ld;
-------------
-HINT:Introduce Hint
-FIX:Create Field "public $field;" in Class "TestClass" (TestClass.php)

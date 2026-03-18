@@ -1,6 +1,0 @@
-Code completion result for source line:
-$this->data->|publicField;
-(QueryType=COMPLETION, prefixSearch=true, caseSensitive=true)
-METHOD     publicMethod()                  [PUBLIC]   TestData
-METHOD     publicStaticMethod()            [STATIC]   TestData
-VARIABLE   array publicField               [PUBLIC]   TestData

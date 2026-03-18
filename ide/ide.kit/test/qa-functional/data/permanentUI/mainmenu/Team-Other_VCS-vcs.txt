@@ -1,2 +1,0 @@
-Other VCS   >   Mercurial >    M
-                Subversion  >   S

@@ -1,3 +1,0 @@
-                  Branches                        > Branch...                      B
-                                                    Switch to Branch...            S
-                                                    Merge Changes from Branch...   M

@@ -1,3 +1,0 @@
-Foo:CLASS:[PUBLIC]:ESCAPED{Foo}:
-  bar:CLASS:[PUBLIC]:ESCAPED{bar}:
-  test:METHOD:[PUBLIC]:ESCAPED{test}ESCAPED{(}ESCAPED{someArray}ESCAPED{)}<font color="#999999">ESCAPED{ : }undefined</font>:

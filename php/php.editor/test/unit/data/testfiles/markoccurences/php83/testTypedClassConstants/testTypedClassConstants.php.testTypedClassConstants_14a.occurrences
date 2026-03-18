@@ -1,2 +1,0 @@
-    public const float |>MARK_OCCURRENCES:FL^OAT<| = 1.5;
-var_dump(ClassTest::|>MARK_OCCURRENCES:FLOAT<|);

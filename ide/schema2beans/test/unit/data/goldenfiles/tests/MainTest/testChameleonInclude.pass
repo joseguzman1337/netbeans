@@ -1,6 +1,0 @@
-Calling GenBeans.doIt
-Bean Tree:
-basket <basket> : Basket
-	item <item> : Item[1,n]
-		color <color> : java.lang.String 	[enumeration (red), enumeration (green), enumeration (blue)]
-

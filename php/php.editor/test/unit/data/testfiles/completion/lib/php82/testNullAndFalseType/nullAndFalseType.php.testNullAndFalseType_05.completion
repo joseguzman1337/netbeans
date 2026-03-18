@@ -1,6 +1,0 @@
-Code completion result for source line:
-public function testNull(null $null): nu|ll {
-(QueryType=COMPLETION, prefixSearch=true, caseSensitive=true)
-CLASS      NullAndFalseType                [PUBLIC]   nullAndFalseType.php
-------------------------------------
-KEYWORD    null                                       null

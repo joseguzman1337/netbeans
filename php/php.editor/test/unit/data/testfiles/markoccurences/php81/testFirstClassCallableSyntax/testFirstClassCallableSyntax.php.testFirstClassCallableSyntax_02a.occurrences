@@ -1,3 +1,0 @@
-    public function |>MARK_OCCURRENCES:public^Method<|(int $param): int {
-$fn = $test->|>MARK_OCCURRENCES:publicMethod<|(...);
-$fn = (new Test)->|>MARK_OCCURRENCES:publicMethod<|(...);

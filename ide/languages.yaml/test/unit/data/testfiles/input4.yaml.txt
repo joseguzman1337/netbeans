@@ -1,4 +1,0 @@
-.t.e.s.t. Mustache
-  image: {{ .Values.image }}
-  out: {{ '{{' and '}}' }}
-.e.o.f.

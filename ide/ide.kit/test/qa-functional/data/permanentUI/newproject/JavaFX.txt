@@ -1,5 +1,0 @@
-JavaFX
-JavaFX Application
-JavaFX Preloader
-JavaFX FXML Application
-JavaFX in Swing Application

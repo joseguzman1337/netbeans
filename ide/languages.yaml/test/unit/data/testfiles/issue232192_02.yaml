@@ -1,6 +1,0 @@
-services:
-    bt.twig.common_bt_extension:
-        class: %bt.twig.common_bt_extension.class%
-        tags:
-            - { name: twig.extension }
-        arguments: [@service_container]

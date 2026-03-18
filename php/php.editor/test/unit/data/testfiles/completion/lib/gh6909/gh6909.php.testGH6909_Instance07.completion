@@ -1,3 +1,0 @@
-Code completion result for source line:
-$this->type->|test;
-(QueryType=COMPLETION, prefixSearch=true, caseSensitive=true)

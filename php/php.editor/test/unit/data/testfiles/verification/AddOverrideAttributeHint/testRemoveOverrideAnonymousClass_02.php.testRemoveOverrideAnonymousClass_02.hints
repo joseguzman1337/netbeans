@@ -1,4 +1,0 @@
-                    #[Override]
-                      --------
-HINT:Remove "#[\Override]" Attribute from "anonymousStaticMethod1" method
-FIX:Remove "#[\Override]" Attribute from "anonymousStaticMethod1" method

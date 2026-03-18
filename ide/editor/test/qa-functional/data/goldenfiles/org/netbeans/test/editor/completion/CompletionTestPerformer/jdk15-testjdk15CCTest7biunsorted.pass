@@ -1,2 +1,0 @@
-public void test(String permanent, String... variable)
-public static void testStatic(String permanent, String... variable)

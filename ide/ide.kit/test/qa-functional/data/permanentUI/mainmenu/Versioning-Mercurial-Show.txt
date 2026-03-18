@@ -1,4 +1,0 @@
-                  Show               > Show Annotations    A
-                                       Show Incoming       I
-                                       Show Out            O
-                                       View...             V

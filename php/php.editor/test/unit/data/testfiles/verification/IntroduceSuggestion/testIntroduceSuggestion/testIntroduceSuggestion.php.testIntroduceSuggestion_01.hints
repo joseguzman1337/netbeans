@@ -1,4 +1,0 @@
-new MyClass();^
--------------
-HINT:Introduce Hint
-FIX:Create Class "MyClass" in ...%SEP%testIntroduceSuggestion%SEP%MyClass.php

@@ -1,8 +1,0 @@
-Name: AliasClass
-\AliasClass::${cursor}
-
-Name: AliasEnum
-\AliasEnum::${cursor}
-
-Name: AliasInterface
-\AliasInterface::${cursor}

@@ -1,2 +1,0 @@
-    public const mixed |>MARK_OCCURRENCES:MIX^ED<| = 1 + self::WITHOUT_TYPE;
-var_dump(ClassTest::|>MARK_OCCURRENCES:MIXED<|);

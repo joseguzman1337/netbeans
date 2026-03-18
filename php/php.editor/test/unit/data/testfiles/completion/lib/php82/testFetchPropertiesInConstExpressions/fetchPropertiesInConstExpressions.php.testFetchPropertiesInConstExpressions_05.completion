@@ -1,5 +1,0 @@
-Code completion result for source line:
-const VALUE = E::Case->va|lue;
-(QueryType=COMPLETION, prefixSearch=true, caseSensitive=true)
-------------------------------------
-VARIABLE   string value                               \E

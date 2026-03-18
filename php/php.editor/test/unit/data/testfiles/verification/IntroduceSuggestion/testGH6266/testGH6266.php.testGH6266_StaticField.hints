@@ -1,4 +1,0 @@
-TestClass::$staticFiel^d;
------------------------
-HINT:Introduce Hint
-FIX:Create Field "$staticField" in Class "TestClass" (TestClass.php)

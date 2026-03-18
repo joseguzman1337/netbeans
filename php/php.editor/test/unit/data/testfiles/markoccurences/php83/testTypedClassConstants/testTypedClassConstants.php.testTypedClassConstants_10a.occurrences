@@ -1,2 +1,0 @@
-    protected const A&B |>MARK_OCCURRENCES:INTER^SECTION<| = B;
-var_dump(ClassTest::|>MARK_OCCURRENCES:INTERSECTION<|);

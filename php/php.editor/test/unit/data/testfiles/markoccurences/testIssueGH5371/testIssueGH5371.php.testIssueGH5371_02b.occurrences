@@ -1,3 +1,0 @@
-class |>MARK_OCCURRENCES:TestClass<| implements TestInterface {
-$a = new |>MARK_OCCURRENCES:TestCla^ss<|();
-if ($a instanceof |>MARK_OCCURRENCES:TestClass<|) {

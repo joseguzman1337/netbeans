@@ -1,3 +1,0 @@
-Diff    >   Diff To HEAD        D
-            Diff To Tracked     R
-            Diff To...    T

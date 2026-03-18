@@ -1,2 +1,0 @@
-    public (Foo&Bar)|(Baz&Foo) $|>MARK_OCCURRENCES:fieldBar<|;
-        $this->fieldClass->|>MARK_OCCURRENCES:fieldB^ar<|;

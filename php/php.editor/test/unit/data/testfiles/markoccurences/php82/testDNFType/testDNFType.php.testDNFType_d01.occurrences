@@ -1,2 +1,0 @@
-    public const |>MARK_OCCURRENCES:CONSTAN^T_FOO<| = "test";
-        $this->fieldClass::|>MARK_OCCURRENCES:CONSTANT_FOO<|;

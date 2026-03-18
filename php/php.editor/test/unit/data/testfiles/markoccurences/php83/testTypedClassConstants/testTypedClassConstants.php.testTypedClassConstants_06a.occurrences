@@ -1,2 +1,0 @@
-enum |>MARK_OCCURRENCES:EnumT^est<| {
-    public const static A = |>MARK_OCCURRENCES:EnumTest<|::Test; // enum

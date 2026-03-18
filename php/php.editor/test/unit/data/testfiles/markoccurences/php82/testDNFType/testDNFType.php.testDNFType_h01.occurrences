@@ -1,2 +1,0 @@
-    public static (Foo&Bar)|Bar $|>MARK_OCCURRENCES:staticF^ieldBar<|;
-        $test::$|>MARK_OCCURRENCES:staticFieldBar<|;

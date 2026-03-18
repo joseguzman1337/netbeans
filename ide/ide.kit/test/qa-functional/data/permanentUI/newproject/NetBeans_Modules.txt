@@ -1,5 +1,0 @@
-NetBeans Modules
-    Module
-    Module Suite
-    Library Wrapper Module
-    NetBeans Platform Application

@@ -1,6 +1,0 @@
-Code completion result for source line:
-public function test(true $true): tru|e {
-(QueryType=COMPLETION, prefixSearch=true, caseSensitive=true)
-CLASS      TrueType                        [PUBLIC]   trueType.php
-------------------------------------
-KEYWORD    true                                       null

@@ -1,4 +1,0 @@
-Git     >  Clone...                 C
-           Initialize Repository... N
-           ====================
-           Repository Browser       Y

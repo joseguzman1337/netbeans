@@ -1,6 +1,0 @@
-BackedEnumString::C^ase3;
------------------------
-HINT:Introduce Hint
-FIX:Create Constant "Case3" in Enum "BackedEnumString" (testEnumCase.php)
-HINT:Introduce Hint
-FIX:Create Enum Case "Case3" in Enum "BackedEnumString" (testEnumCase.php)

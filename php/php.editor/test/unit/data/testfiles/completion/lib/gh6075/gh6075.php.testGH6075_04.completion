@@ -1,5 +1,0 @@
-Code completion result for source line:
-$user4->|getId();
-(QueryType=COMPLETION, prefixSearch=true, caseSensitive=true)
-METHOD     getId()                         [PUBLIC]   User
-VARIABLE   int id                          [PUBLIC]   User

@@ -1,2 +1,0 @@
-    public const |>MARK_OCCURRENCES:CON^STANT_BAZ<| = "test";
-        $test::|>MARK_OCCURRENCES:CONSTANT_BAZ<|;

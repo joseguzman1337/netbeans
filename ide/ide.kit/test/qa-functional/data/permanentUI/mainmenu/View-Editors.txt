@@ -1,3 +1,0 @@
-    Editors                  > (o) Source   S
-                               ( ) Design   D
-                                   ...

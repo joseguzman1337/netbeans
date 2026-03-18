@@ -1,2 +1,0 @@
-Main-Class: org.netbeans.editor.example.Editor
-Class-Path: editor-lib.jar

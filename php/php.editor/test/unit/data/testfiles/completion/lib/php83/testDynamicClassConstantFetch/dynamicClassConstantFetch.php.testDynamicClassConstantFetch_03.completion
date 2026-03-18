@@ -1,4 +1,0 @@
-Code completion result for source line:
-Test::{$var|iable};
-(QueryType=COMPLETION, prefixSearch=true, caseSensitive=true)
-VARIABLE   string $variable                [PUBLIC]   dynamicClassConstantFetch.php

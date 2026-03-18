@@ -1,2 +1,0 @@
-        $fn = self::|>MARK_OCCURRENCES:testStatic<|(...);
-    private static function |>MARK_OCCURRENCES:testSt^atic<|(): void {

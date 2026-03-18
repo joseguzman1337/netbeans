@@ -1,3 +1,0 @@
-OpenIDE-Module: org.openide.awt.test
-OpenIDE-Module-Layer: org/openide/awt/test-layer.xml
-OpenIDE-Public-Packages: -

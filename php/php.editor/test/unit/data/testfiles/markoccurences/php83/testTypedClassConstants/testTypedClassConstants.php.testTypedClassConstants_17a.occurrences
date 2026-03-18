@@ -1,2 +1,0 @@
-    public const iterable |>MARK_OCCURRENCES:ITER^ABLE<| = ['a', 'b', 'c'];
-var_dump(ClassTest::|>MARK_OCCURRENCES:ITERABLE<|);

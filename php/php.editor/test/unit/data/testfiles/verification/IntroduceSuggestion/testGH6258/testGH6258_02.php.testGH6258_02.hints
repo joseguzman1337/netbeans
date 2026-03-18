@@ -1,4 +1,0 @@
-$test->generatedMet^hod();
-------------------------
-HINT:Introduce Hint
-FIX:Create Method " generatedMethod()" in Class "TestClass" (TestClass.php)

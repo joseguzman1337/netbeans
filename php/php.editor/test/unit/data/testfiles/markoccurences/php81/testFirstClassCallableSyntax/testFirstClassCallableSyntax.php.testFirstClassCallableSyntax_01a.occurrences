@@ -1,3 +1,0 @@
-function |>MARK_OCCURRENCES:te^st<|($param1, $param2, $param3) {
-|>MARK_OCCURRENCES:test<|(...); // test
-$fn = |>MARK_OCCURRENCES:test<|(...);
